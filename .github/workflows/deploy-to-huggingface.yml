@@ -23,5 +23,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
         run: |
-          git remote add space https://user:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE_REPO}
+          git remote add space https://huggingface.co/spaces/danielle2003/RNN-CA
           git push space main --force
