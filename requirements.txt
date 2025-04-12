@@ -2,8 +2,5 @@ matplotlib
 pandas
 numpy
 yfinance
-datasets
-tensorflow
 scikit-learn
 streamlit
-huggingface_hub

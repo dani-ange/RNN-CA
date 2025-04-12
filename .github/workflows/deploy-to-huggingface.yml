@@ -1,0 +1,27 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "dani-ange"
+          git config --global user.email "danielledjofang2003@gmail.com"
+
+      - name: Add Hugging Face Remote
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
+        run: |
+          git remote add space https://user:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE_REPO}
+          git push space main --force
