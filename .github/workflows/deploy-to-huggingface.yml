@@ -1,29 +1,61 @@
-name: Deploy to Hugging Face Spaces
+name: Deploy Streamlit App to Hugging Face Space
 
 on:
   push:
     branches:
-      - master
+      - master   # Adjust to your main branch (could be 'main' or 'master')
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      # Checkout the repository
+      - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 
 
+      # Set up Git
       - name: Set up Git
         run: |
           git config --global user.name "dani-ange"
           git config --global user.email "danielledjofang2003@gmail.com"
 
-      - name: Add Hugging Face Remote
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
+      # Install Git LFS (Large File Storage)
+      - name: Set up Git LFS
         run: |
-          git remote add space https://user:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE_REPO}
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      # Install dependencies (if needed)
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # Set up Hugging Face authentication
+      - name: Set up Hugging Face auth
+        run: |
+          echo "${{ secrets.HF_TOKEN }}" | gh auth login --with-token
+
+      # Add remote for Hugging Face Space repository
+      - name: Add Hugging Face remote
+        run: |
+          git remote add space https://user:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/${{ secrets.HF_SPACE_REPO }}
+
+      # Track and push large files with Git LFS
+      - name: Track files with Git LFS
+        run: |
+          git lfs track "*.png"
+          git lfs track "*.h5"
+          git add .gitattributes
+
+      # Stage and commit all changes
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "Update Streamlit app and model files" || echo "No changes to commit"
+
+      # Push to Hugging Face Space
+      - name: Push to Hugging Face Space
+        run: |
           git push space master --force
