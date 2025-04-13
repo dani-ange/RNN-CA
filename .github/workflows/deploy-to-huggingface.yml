@@ -34,8 +34,10 @@ jobs:
 
       # Set up Hugging Face authentication
       - name: Set up Hugging Face auth
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          echo "${{ secrets.HF_TOKEN }}" | gh auth login --with-token
+          huggingface-cli login --token $HF_TOKEN
 
       # Add remote for Hugging Face Space repository
       - name: Add Hugging Face remote
