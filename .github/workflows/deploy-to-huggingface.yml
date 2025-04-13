@@ -13,7 +13,8 @@ jobs:
       # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        with:
+          lfs: true  
       # Set up Git
       - name: Set up Git
         run: |
@@ -42,6 +43,7 @@ jobs:
       # Add remote for Hugging Face Space repository
       - name: Add Hugging Face remote
         run: |
+         
           git remote add space https://user:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/${{ secrets.HF_SPACE_REPO }}
 
       # Track and push large files with Git LFS
@@ -56,6 +58,8 @@ jobs:
         run: |
           git add .
           git commit -m "Update Streamlit app and model files" || echo "No changes to commit"
+      - name: List LFS-tracked files
+        run: git lfs ls-files
 
       # Push to Hugging Face Space
       - name: Push to Hugging Face Space
